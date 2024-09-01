@@ -1,19 +1,34 @@
-import nbtlib
-from nbtlib import Compound, Int, Long, Byte, Float, String, List
+from tkinter import filedialog, simpledialog, messagebox
+from nbtlib import Compound, Int, Long, Byte, Float, String, List, load, File
+import os
 
-# 3DS level.dat file path
-level_3ds_path = 'level_3ds.dat'  # Update this with your 3DS level.dat path
-level_bedrock_path = 'level_bedrock.dat'  # Output path for Bedrock level.dat
+level_3ds_path = filedialog.askopenfilename( # Open PATH for 3DS level.dat
+    defaultextension=".data",
+    filetypes=[("Minecraft 3DS level.dat Files", "*.dat")],
+    initialdir=os.getcwd(),
+    title="Open MC3DS Level Data File"
+)
+
+level_bedrock_path = filedialog.asksaveasfilename( # Output path for Bedrock level.dat
+    defaultextension=".dat",
+    filetypes=[("Bedrock Edition level.dat File", "*.dat")],
+    initialdir=os.getcwd(),
+    title="Save-As Bedrock Level Data File"
+)
 
 # Load 3DS level.dat
 try:
-    level_3ds = nbtlib.load(level_3ds_path)
+    level_3ds = load(level_3ds_path)
 except FileNotFoundError:
     print(f"Error: The file {level_3ds_path} was not found.")
+    os.system('pause')
     exit(1)
 except Exception as e:
     print(f"Error loading the 3DS level.dat file: {e}")
+    os.system('pause')
     exit(1)
+
+
 
 # Helper function to safely get values with a default fallback
 def get_value(data, key, default):
@@ -85,7 +100,7 @@ level_bedrock = Compound({
 
 # Save the new level.dat file in Bedrock format
 try:
-    level_bedrock_file = nbtlib.File(level_bedrock)
+    level_bedrock_file = File(level_bedrock)
     level_bedrock_file.save(level_bedrock_path)
     print(f"Bedrock level.dat created successfully at {level_bedrock_path}")
 except Exception as e:
